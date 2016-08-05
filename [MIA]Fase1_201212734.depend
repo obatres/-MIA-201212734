@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1470425269 source:/home/obatres/Documentos/MIA/[MIA]Fase1_201212734/main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
