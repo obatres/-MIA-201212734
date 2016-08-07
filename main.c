@@ -2,12 +2,20 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <stdbool.h>
+    #include <math.h>
+    #include <time.h>
 
     typedef struct{
         char nombre[20];
         char direccion[30];
         int telefono;
     }Contacto;
+
+    typedef struct{
+        char * texto;
+        split * next;
+    }split;
 
 
     char cadenainicial[250];
@@ -18,6 +26,8 @@
     void pausar();
     void comandoMskdisk(char cadena[]);
     void token(char cad[]);
+    void evaluarComando();
+
     int main(){
 
 
@@ -51,8 +61,9 @@
                         printf("ingrese comando: \n");
                         char  ingreso[250];
                         scanf("%s",&ingreso);
+                        evaluarComando();
                         //comandoMskdisk(ingreso);
-                        token(ingreso);
+                        //token(ingreso);
                         break;
                     case 4:
                         printf("Fin del programa\n");
@@ -64,6 +75,25 @@
         }
     }
 
+    void evaluarComando(){
+        struct split *ptr = head;
+        while(ptr!=NULL){
+            if(ptr->next == NULL){
+                if(strcmp(ptr->texto,"/")==0){
+
+                    main();
+                }
+            }
+            ptr = ptr->next;
+        }
+        ptr = head;
+        if((strcmp(ptr->texto,"mkdisk"))==0){
+            //crear_disco(ptr->next);
+            printf("crea disco");
+            limpiarLista();
+
+        }
+    }
     Contacto crearContacto(){
         Contacto contacto;
 
@@ -124,7 +154,8 @@
     }
 
     void comandoMskdisk(char cadena[]){
-           char  str[250];
+           char  str[25];
+           printf(cadena);
            strcpy(str,cadena);
            //Mkdisk –Size::3000 +unit::K –path::"/home/user/" –name::"Disco1.dsk";
             char piece1[20] = ""
@@ -162,7 +193,6 @@
         ptrToken = strtok(cadenainicial," ");
             if ( ptrToken != NULL ) {
                 printf( "%s\n", ptrToken );
-
                 ptrToken = strtok(NULL, " " );
                 ptrToken = "\0";
 
