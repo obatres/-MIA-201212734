@@ -5,6 +5,9 @@
     #include <stdbool.h>
     #include <math.h>
     #include <time.h>
+    #define OK       0
+    #define NO_INPUT 1
+    #define TOO_LONG 2
 
     typedef struct{
         char nombre[20];
@@ -12,10 +15,12 @@
         int telefono;
     }Contacto;
 
-    typedef struct{
+    struct split{
         char * texto;
-        split * next;
-    }split;
+        struct split * next;
+    };
+
+    struct split *head = NULL;
 
 
     char cadenainicial[250];
@@ -24,22 +29,118 @@
     void guardarContacto(Contacto contacto, char* nombreArchivo);
     void mostrarAgenda(char* nombreArchivo);
     void pausar();
-    void comandoMskdisk(char cadena[]);
-    void token(char cad[]);
+    void comandoMskdisk(char* cadena);
+    void token(char *cad);
     void evaluarComando();
+
+
+    void limpiarLista(){
+    head = NULL;
+    }
+
+    void separar (char *entrada){
+        char str[250];
+        strcpy(str,&entrada);
+        printf(str);
+        char piece1[20] = ""
+            ,piece2[20] = "";
+
+        char * p;
+
+        p = strtok (str," "); // call the strtok with str as 1st arg for the 1st time.
+        if (p != NULL) // check if we got a token.
+        {
+            strcpy(piece1,p); // save the token.
+            p = strtok (NULL, " "); // subsequent call should have NULL as 1st arg.
+            if (p != NULL) // check if we got a token.
+            strcpy(piece2,p); // save the token.
+        }
+        //printf("%s :: %s\n",piece1,piece2); // prints Stackoverflow :: Serverfault
+          printf("%s",piece2);
+          getchar();
+    }
+
+    void imprimir(char *cadena){
+        char recibe[250];
+        strcpy(recibe,&cadena);
+        for (int i =0;i<=10;i++){
+            printf(recibe);
+        }
+
+    }
+
+    int getLine (char *prmpt, char *buff, size_t sz) {
+        int ch, extra;
+        size_t len;
+
+
+
+        if (prmpt != NULL) {
+            printf ("%s", prmpt);
+            fflush (stdout);
+        }
+
+        if (fgets (buff, sz, stdin) == NULL)
+            return NO_INPUT;
+
+
+
+        len = strlen (buff);
+            if (buff[len-1] != '\n') {
+
+
+            extra = 0;
+            while ((ch = getchar()) != '\n') {
+            if (ch == EOF) break;
+                extra = 1;
+            }
+
+
+
+            return (extra == 1) ? TOO_LONG : OK;
+            }
+
+            buff[len-1] = '\0';
+            return OK;
+}
 
     int main(){
 
+        int rc;
+        char buff[1024];
 
-        char nombreArchivo[12]= "agenda.bin";
-        menu (nombreArchivo);
+        rc = getLine("instruccion: ",buff,sizeof(buff));
+
+        if (rc == NO_INPUT){
+        printf("\nNO IMPUT\n");
+        return 1;
+        }
+
+        if (rc == TOO_LONG) {
+        printf ("Too long [%s]\n", buff);
+        return 1;
+        }
+
+        //char * cadena1;
+        //scanf("%s",&cadena1);
+        //imprimir(cadena1);
+        //separar(cadena1);
+        //char * entrada;
+        //printf("ingrese cadea:\n");
+        //scanf("%s",entrada);
+        //token(entrada);
+        //char nombreArchivo[12]= "agenda.bin";
+        //menu (nombreArchivo);
+        //limpiarLista();
         return 0;
+
     }
 
     void menu(char* nombreArchivo){
         int opcion;
 
-        while (opcion!=4){
+
+       while (opcion!=4){
             printf("\n");
             printf("1. Crear contacto\n");
             printf("2. Consultar agenda\n");
@@ -59,10 +160,10 @@
                         break;
                     case 3:
                         printf("ingrese comando: \n");
-                        char  ingreso[250];
+                        char * ingreso;
                         scanf("%s",&ingreso);
                         evaluarComando();
-                        //comandoMskdisk(ingreso);
+                        comandoMskdisk(ingreso);
                         //token(ingreso);
                         break;
                     case 4:
@@ -76,8 +177,8 @@
     }
 
     void evaluarComando(){
-        struct split *ptr = head;
-        while(ptr!=NULL){
+         struct split *ptr = head;
+          while(ptr!=NULL){
             if(ptr->next == NULL){
                 if(strcmp(ptr->texto,"/")==0){
 
@@ -94,6 +195,7 @@
 
         }
     }
+
     Contacto crearContacto(){
         Contacto contacto;
 
@@ -153,10 +255,10 @@
         printf("");
     }
 
-    void comandoMskdisk(char cadena[]){
-           char  str[25];
+    void comandoMskdisk(char* cadena){
+           char  str[]="uno dos tres cuatro cinco";
            printf(cadena);
-           strcpy(str,cadena);
+           //strcpy(str,cadena);
            //Mkdisk –Size::3000 +unit::K –path::"/home/user/" –name::"Disco1.dsk";
             char piece1[20] = ""
                 ,piece2[20] = ""
@@ -182,15 +284,15 @@
            // printf("%s \n ",p);
     }
 
-    void token (char cad[]){
+    void token (char *cad){
         //char  cad[] = "Este es un enunciado con 7 tokens";
-        //char cadena[25];
-        strcpy(cadenainicial, cad);
+        char cadena[]="Hola como te va";
+        //strcpy(cadena, cad);
         char *ptrToken;
 
         printf("Los tokens son:" );
 
-        ptrToken = strtok(cadenainicial," ");
+        ptrToken = strtok(cadena," ");
             if ( ptrToken != NULL ) {
                 printf( "%s\n", ptrToken );
                 ptrToken = strtok(NULL, " " );
@@ -198,6 +300,8 @@
 
             }
     }
+
+
 
 
 
